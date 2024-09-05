@@ -1,0 +1,12 @@
+enhancement:
+  - head-branch: ['^feature']
+bug:
+  - head-branch: ['^bug']
+degre:
+  - head-branch: ['^degre']
+hotfix:
+  - head-branch: ['^hotfix']
+improve:
+  - head-branch: ['^improve']
+release:
+  - head-branch: ['^release']
