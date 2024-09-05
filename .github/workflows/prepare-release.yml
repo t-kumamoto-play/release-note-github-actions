@@ -67,7 +67,7 @@ jobs:
       - name: log
         id: log
         run: |
-          echo ${{ steps.release_note.outputs.release_note }}
+          echo "${{ steps.release_note.outputs.release_note }}"
 
       # タグを切り、リリースノートを作成する
       - name: Create Release
