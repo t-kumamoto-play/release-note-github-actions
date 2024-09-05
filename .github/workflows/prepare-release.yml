@@ -10,7 +10,7 @@ on:
 jobs:
   create-release-tag:
     if: (StartsWith(github.head_ref, 'release/') || StartsWith(github.head_ref, 'hotfix/')) && github.event.pull_request.merged == true
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
