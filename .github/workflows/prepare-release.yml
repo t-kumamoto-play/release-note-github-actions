@@ -1,3 +1,6 @@
+# 参考記事
+# https://zenn.dev/kshida/articles/auto-generate-release-note-with-calver
+
 name: Prepare Release
 
 on:
@@ -45,7 +48,7 @@ jobs:
       - name: Update version
         run: |
           git config --global user.name 'github-actions[bot]'
-          git config --global user.email '0000000+github-actions[bot]@users.noreply.github.com'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           yarn version --new-version "${{ steps.release_tag.outputs.release_tag }}"
       # # 更新内容をpushする
       - name: Push master
@@ -55,11 +58,11 @@ jobs:
       - name: Generate release note
         id: release_note
         run: |
-          echo "release_note=$(curl -X POST -H 'Accept: application/vnd.github+json' -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://github.com/t-kumamoto-play/release-note-github-actions/releases/generate-notes -d '{"tag_name":"${{ steps.release_tag.outputs.release_tag }}", "previous_tag_name":"${{ steps.cur_version.outputs.version }}"}' | jq .body | sed 's/"//g')" >> $GITHUB_OUTPUT
+          echo "release_note=$(curl -X POST -H 'Accept: application/vnd.github+json' -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/${{ github.repository }}/releases/generate-notes -d '{"tag_name":"${{ steps.release_tag.outputs.release_tag }}", "previous_tag_name":"${{ steps.cur_version.outputs.version }}"}' | jq .body | sed 's/"//g')" >> $GITHUB_OUTPUT
       # タグを切り、リリースノートを作成する
       - name: Create Release
         run: |
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d "{ \"tag_name\": \"${{ steps.release_tag.outputs.release_tag }}\", \"name\": \"${{ steps.release_tag.outputs.release_tag }}\", \"body\": \"${{ steps.release_note.outputs.release_note }}\"}" \
-            https://github.com/t-kumamoto-play/release-note-github-actions/releases
+            https://api.github.com/repos/${{ github.repository }}/releases
