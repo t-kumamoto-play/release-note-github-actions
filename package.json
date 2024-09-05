@@ -1,6 +1,6 @@
 {
   "name": "release-note-github-actions",
-  "version": "2024.09.05-4",
+  "version": "2024.09.05-5",
   "description": "",
   "main": "index.js",
   "scripts": {
