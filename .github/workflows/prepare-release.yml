@@ -1,0 +1,65 @@
+name: Prepare Release
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
+
+jobs:
+  create-release-tag:
+    if: (StartsWith(github.head_ref, 'release/') || StartsWith(github.head_ref, 'hotfix/')) && github.event.pull_request.merged == true
+    runs-on: self-hosted
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TZ: 'Asia/Tokyo'
+
+    outputs:
+      version: ${{ steps.cur_version.outputs.version }}
+      release_tag: ${{ steps.release_tag.outputs.release_tag }}
+      release_note: ${{ steps.release_note.outputs.release_note }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # package.jsonのバージョンを取得する
+      - name: Get current version
+        id: cur_version
+        run: echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+
+      # タグ(新バージョン)を生成する 「{YYYY.MM.DD}-{当日リリース回数}」
+      - name: Generate release tag
+        id: release_tag
+        run: |
+          today=$(date +'%Y.%m.%d')
+          pre_release_date=$(echo ${{ steps.cur_version.outputs.version }} | awk -F'-' '{print $1}')
+          pre_release_count=$(echo ${{ steps.cur_version.outputs.version }} | awk -F'-' '{print $2}')
+          if [[ ! $pre_release_date = $today ]]; then
+            echo "init count"
+            pre_release_count=0
+          fi
+          echo "release_tag=$today-$(($pre_release_count + 1))" >> $GITHUB_OUTPUT
+      # package.jsonのversionを更新する
+      - name: Update version
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '0000000+github-actions[bot]@users.noreply.github.com'
+          yarn version --new-version "${{ steps.release_tag.outputs.release_tag }}"
+      # # 更新内容をpushする
+      - name: Push master
+        run: |
+          git push origin HEAD:master
+      # 前回リリースからの差分をもとに、リリースノートの本文を生成する
+      - name: Generate release note
+        id: release_note
+        run: |
+          echo "release_note=$(curl -X POST -H 'Accept: application/vnd.github+json' -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://github.com/t-kumamoto-play/release-note-github-actions/releases/generate-notes -d '{"tag_name":"${{ steps.release_tag.outputs.release_tag }}", "previous_tag_name":"${{ steps.cur_version.outputs.version }}"}' | jq .body | sed 's/"//g')" >> $GITHUB_OUTPUT
+      # タグを切り、リリースノートを作成する
+      - name: Create Release
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{ \"tag_name\": \"${{ steps.release_tag.outputs.release_tag }}\", \"name\": \"${{ steps.release_tag.outputs.release_tag }}\", \"body\": \"${{ steps.release_note.outputs.release_note }}\"}" \
+            https://github.com/t-kumamoto-play/release-note-github-actions/releases
