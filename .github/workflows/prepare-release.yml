@@ -88,4 +88,4 @@ jobs:
       # 更新内容をpushする
       - name: Push master
         run: |
-          git push origin HEAD:master
+          git push origin master
