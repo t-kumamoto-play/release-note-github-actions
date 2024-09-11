@@ -84,7 +84,7 @@ jobs:
       - name: Pull master
         run: |
           git config pull.rebase false
-          git pull origin master
+          git pull origin main
 
       # masterへのマージ
       - name: Enable auto-merge
@@ -93,4 +93,4 @@ jobs:
       # 更新内容をpushする
       - name: Push master
         run: |
-          git push origin master
+          git push origin main
