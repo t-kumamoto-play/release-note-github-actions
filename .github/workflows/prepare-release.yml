@@ -6,7 +6,7 @@ name: Prepare Release
 on:
   pull_request:
     branches:
-      - master
+      - main
     # ラベルが付けられた時にキックする
     types:
       - labeled
@@ -81,16 +81,16 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/releases
       
       # 更新内容をpullする
-      - name: Pull master
+      - name: Pull main
         run: |
           git config pull.rebase false
           git pull origin main
 
-      # masterへのマージ
+      # mainへのマージ
       - name: Enable auto-merge
         run: gh pr merge --rebase --auto "$PR_URL"
 
       # 更新内容をpushする
-      - name: Push master
+      - name: Push main
         run: |
           git push origin main
