@@ -83,10 +83,10 @@ jobs:
       #     git pull origin master
 
       # masterへのマージ
-      - name: Enable auto-merge
-        run: gh pr merge --rebase --auto "$PR_URL"
+      # - name: Enable auto-merge
+      #   run: gh pr merge --rebase --auto "$PR_URL"
 
       # 更新内容をpushする
-      - name: Push master
-        run: |
-          git push origin master
+      # - name: Push master
+      #   run: |
+      #     git push origin master
