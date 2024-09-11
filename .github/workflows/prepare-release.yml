@@ -37,7 +37,9 @@ jobs:
       # package.jsonのバージョンを取得する
       - name: Get current version
         id: cur_version
-        run: echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
+        run: |
+          echo "$(jq -r '.version' package.json)"
+          echo "version=$(jq -r '.version' package.json)" >> $GITHUB_OUTPUT
 
       # タグ(新バージョン)を生成する 「{YYYY.MM.DD}-{当日リリース回数}」
       - name: Generate release tag
