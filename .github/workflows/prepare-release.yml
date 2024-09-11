@@ -30,6 +30,11 @@ jobs:
         with:
           fetch-depth: 0 # これが必要
 
+      # ぶらんち
+      - name: Now Branch
+        run: |
+          git branch
+
       # 特定のラベルが付与されたかをチェック
       - name: Checking Release Approve Label
         if: ((github.event.action == 'labeled' && github.event.label.name == 'Release Approved') || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'Release Approved')))
