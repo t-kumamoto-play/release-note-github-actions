@@ -77,7 +77,7 @@ jobs:
 
       # masterへのマージ
       - name: Enable auto-merge
-        run: gh pr merge --rebase "$PR_URL"
+        run: gh pr merge --rebase --auto "$PR_URL"
 
       # 更新内容をpushする
       - name: Push master
