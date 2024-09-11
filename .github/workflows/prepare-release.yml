@@ -7,8 +7,9 @@ on:
   pull_request:
     branches:
       - master
+    # ラベルが付けられた時にキックする
     types:
-      - closed
+      - labeled
 
 jobs:
   create-release-tag:
@@ -27,6 +28,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      # 特定のラベルが付与されたかをチェック
+      - name: Checking Release Approve Label
+        if: ((github.event.action == 'labeled' && github.event.label.name == 'Release Approved') || (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'Release Approved')))
+        run: |
+          echo "release_approver=true"
 
       # package.jsonのバージョンを取得する
       - name: Get current version
