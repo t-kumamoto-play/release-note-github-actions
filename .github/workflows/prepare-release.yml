@@ -79,7 +79,7 @@ jobs:
       - name: Pull master
         run: |
           git config pull.rebase false
-          git pull origin HEAD:master
+          git pull origin master
 
       # masterへのマージ
       - name: Enable auto-merge
