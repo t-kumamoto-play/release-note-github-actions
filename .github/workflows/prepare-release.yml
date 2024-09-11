@@ -78,6 +78,7 @@ jobs:
       # 更新内容をpullする
       - name: Pull master
         run: |
+          git config pull.rebase false
           git pull origin HEAD:master
 
       # masterへのマージ
