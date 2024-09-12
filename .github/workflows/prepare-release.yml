@@ -68,6 +68,18 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           yarn version --new-version "${{ steps.release_tag.outputs.release_tag }}"
 
+      # 前回のタグ名
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          echo "${{ steps.cur_version.outputs.version }}"
+
+      # 今回のタグ
+      - name: Get current tag
+        id: cur_tag
+        run: |
+          echo "${{ steps.release_tag.outputs.release_tag }}"
+
       # 前回リリースからの差分をもとに、リリースノートの本文を生成する
       - name: Generate release note
         id: release_note
